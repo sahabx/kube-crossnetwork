@@ -1,0 +1,20 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: user-container
+  template:
+    metadata:
+      labels:
+        name: user-container
+        type: user
+    spec:
+      containers:
+        - name: user-container
+          image: shahabu/kube-crossnetworking-user:latest
