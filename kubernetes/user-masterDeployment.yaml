@@ -1,4 +1,15 @@
-
+apiVersion: v1
+kind: Service
+metadata:
+  name: kub-crossnetwork-service
+spec:
+  selector:
+    name: user-container
+  type: LoadBalancer
+  ports:
+    - protocol: "TCP"
+      port: 8000
+      targetPort: 8080
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -18,3 +29,39 @@ spec:
       containers:
         - name: user-container
           image: shahabu/kube-crossnetworking-user:latest
+          env:
+            - name: AUTH_ADDRESS
+              # value: "localhost"
+              valueFrom:
+                configMapKeyRef:
+                  name: user-pod-env
+                  key: AUTH_ADDRESS
+
+        # - name: auth-container
+        #   image: shahabu/kube-crossnetworking-auth:latest
+        #   env:
+        #     - name: AUTH_ADDRESS
+        #       value: "localhost"
+        #       valueFrom:
+        #         configMapKeyRef:
+        #           name: user-pod-env
+        #           key: AUTH_ADDRESS
+---
+version: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      name: auth-container
+  template:
+    metadata:
+      labels:
+        name: auth-container
+        type: auth
+    spec:
+      containers:
+        - name: auth-container
+          image: shahabu/kube-crossnetworking-auth:latest
