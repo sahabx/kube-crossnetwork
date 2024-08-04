@@ -3,4 +3,5 @@ kind: ConfigMap
 metadata:
   name: user-pod-env
 data:
-  AUTH_ADDRESS: "10.105.100.9"
+  AUTH_ADDRESS: "kub-crossnetwork-service-auth.default"
+  TASK_FOLDER: "tasks"

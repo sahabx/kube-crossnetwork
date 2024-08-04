@@ -46,22 +46,3 @@ spec:
         #         configMapKeyRef:
         #           name: user-pod-env
         #           key: AUTH_ADDRESS
----
-version: apps/v1
-kind: Deployment
-metadata:
-  name: auth-deployment
-spec: 
-  replicas: 1
-  selector:
-    matchLabels:
-      name: auth-container
-  template:
-    metadata:
-      labels:
-        name: auth-container
-        type: auth
-    spec:
-      containers:
-        - name: auth-container
-          image: shahabu/kube-crossnetworking-auth:latest

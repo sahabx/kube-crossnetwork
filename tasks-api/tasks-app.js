@@ -13,11 +13,11 @@ app.use(bodyParser.json());
 
 const extractAndVerifyToken = async (headers) => {
   if (!headers.authorization) {
-    throw new Error('No token provided.');
+    throw new Error(`No token provided. Info for diagnosis: authAdd: ${process.env.AUTH_ADDRESS} taskEnvKey: ${process.env.TASKS_FOLDER}`);
   }
   const token = headers.authorization.split(' ')[1]; // expects Bearer TOKEN
 
-  const response = await axios.get('http://auth/verify-token/' + token);
+  const response = await axios.get(`http://${process.env.AUTH_ADDRESS}/verify-token/` + token);
   return response.data.uid;
 };
 
@@ -27,7 +27,7 @@ app.get('/tasks', async (req, res) => {
     fs.readFile(filePath, (err, data) => {
       if (err) {
         console.log(err);
-        return res.status(500).json({ message: 'Loading the tasks failed.' });
+        return res.status(500).json({ message: `Loading the tasks failed. Info for diagnosis: authAdd: ${process.env.AUTH_ADDRESS} taskEnvKey: ${process.env.TASKS_FOLDER}` });
       }
       const strData = data.toString();
       const entries = strData.split('TASK_SPLIT');
@@ -38,7 +38,7 @@ app.get('/tasks', async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(401).json({ message: err.message || 'Failed to load tasks.' });
+    return res.status(401).json({ message: `Failed to load tasks. Info for diagnosis: authAdd: ${process.env.AUTH_ADDRESS} taskEnvKey: ${process.env.TASKS_FOLDER}` });
   }
 });
 
@@ -52,12 +52,12 @@ app.post('/tasks', async (req, res) => {
     fs.appendFile(filePath, jsonTask + 'TASK_SPLIT', (err) => {
       if (err) {
         console.log(err);
-        return res.status(500).json({ message: 'Storing the task failed.' });
+        return res.status(500).json({ message: `Storing the task failed. Info for diagnosis: authAdd: ${process.env.AUTH_ADDRESS} taskEnvKey: ${process.env.TASKS_FOLDER}` });
       }
       res.status(201).json({ message: 'Task stored.', createdTask: task });
     });
   } catch (err) {
-    return res.status(401).json({ message: 'Could not verify token.' });
+    return res.status(401).json({ message: `Could not verify token. Info for diagnosis: authAdd: ${process.env.AUTH_ADDRESS} taskEnvKey: ${process.env.TASKS_FOLDER}` });
   }
 });
 
